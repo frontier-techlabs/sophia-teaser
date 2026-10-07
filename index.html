@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0E1630">
+<meta name="description" content="The Sophia Protocol: a draft governance framework that puts human life first, protects truth and keeps people accountable for AI.">
+<title>Sophia Protocol: AI you can verify</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='28' fill='%230E1630' stroke='%23FFC24B' stroke-width='6'/%3E%3Ccircle cx='32' cy='32' r='9' fill='%235BE7F5'/%3E%3C/svg%3E">
+<style>
+:root{
+  --ink:#0E1630;
+  --ink2:#17224A;
+  --ink3:#223166;
+  --line:#3A4C8C;
+  --text:#F6F8FF;
+  --text2:#D9E1FA;
+  --gold:#FFC24B;
+  --cyan:#5BE7F5;
+  --coral:#FF8077;
+  --mint:#6FF0B8;
+  --paper:#FFF8E6;
+  --paper2:#F6EBCB;
+  --pink:#0E1630;
+  --golddeep:#8A5300;
+  --serif:Georgia,"Iowan Old Style","Palatino Linotype","Book Antiqua",serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{
+  background:#070C1E;color:var(--text);font-family:var(--sans);
+  font-size:1.0625rem;line-height:1.55;overflow-x:hidden;
+  padding-bottom:calc(84px + env(safe-area-inset-bottom,0px));
+}
+.app{max-width:520px;margin:0 auto;background:var(--ink);min-height:100vh;position:relative}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;text-align:left}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--gold);outline-offset:3px;border-radius:6px}
+h1,h2,h3{font-family:var(--serif);font-weight:700;line-height:1.12;letter-spacing:-.01em}
+.wrap{padding:0 20px}
+section{scroll-margin-top:8px}
+
+/* progress bar */
+.progress{position:fixed;top:0;left:0;height:4px;width:0;background:linear-gradient(90deg,var(--cyan),var(--gold));z-index:50}
+
+/* hero */
+.hero{padding:calc(28px + env(safe-area-inset-top,0px)) 20px 34px;position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;right:-90px;top:-70px;width:280px;height:280px;border-radius:50%;
+  background:radial-gradient(circle at 40% 40%,rgba(91,231,245,.28),rgba(91,231,245,0) 68%);pointer-events:none}
+.hero::after{content:"";position:absolute;left:-110px;top:310px;width:300px;height:300px;border-radius:50%;
+  background:radial-gradient(circle at 60% 50%,rgba(255,194,75,.2),rgba(255,194,75,0) 68%);pointer-events:none}
+.brand{font-family:var(--serif);font-weight:700;font-size:clamp(1.75rem,8vw,2.35rem);letter-spacing:.14em;color:var(--gold);text-transform:uppercase;margin-bottom:16px;display:block;line-height:1.1}
+.badge{display:inline-block;background:var(--ink3);border:2px solid var(--gold);color:var(--text);
+  border-radius:999px;padding:7px 14px;font-size:.9rem;font-weight:600}
+.hero h1{font-size:clamp(2.35rem,11.5vw,3.05rem);margin:18px 0 12px;position:relative}
+.hero p.lead{font-size:1.15rem;color:var(--text);max-width:34em;position:relative}
+
+/* instrument */
+.rig{margin-top:24px;background:var(--ink2);border:2px solid var(--line);border-radius:22px;padding:18px 16px 18px;position:relative}
+.rig h2{font-size:1.25rem;margin-bottom:4px}
+.rig .hint{font-size:.95rem;color:var(--text2);margin-bottom:12px}
+.chips{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.chip{min-height:64px;padding:10px 12px;border-radius:14px;background:var(--ink3);border:2px solid var(--line);
+  font-size:1rem;line-height:1.25;font-weight:600;display:flex;align-items:center;transition:border-color .15s,background .15s}
+.chip[aria-pressed="true"]{border-color:var(--gold);background:#2C3C7C}
+.verdict{margin-top:16px;display:grid;grid-template-columns:104px 1fr;gap:14px;align-items:center;
+  background:var(--ink);border-radius:18px;padding:14px;border:2px solid var(--line)}
+.ring{width:104px;height:104px;position:relative}
+.ring svg{width:104px;height:104px;transform:rotate(-90deg)}
+.ring .track{stroke:var(--ink3);fill:none;stroke-width:12}
+.ring .arc{fill:none;stroke-width:12;stroke-linecap:round;stroke-dasharray:289;stroke-dashoffset:289;
+  transition:stroke-dashoffset .9s cubic-bezier(.2,.8,.2,1),stroke .3s}
+.ring .core{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font-family:var(--serif);font-weight:700;font-size:1.35rem;line-height:1.05}
+.ring .core small{font-family:var(--sans);font-size:.875rem;font-weight:600;margin-top:2px}
+.vtext .vword{font-family:var(--serif);font-size:1.5rem;font-weight:700;line-height:1.1;margin-bottom:6px}
+.vtext p{font-size:1rem;color:var(--text)}
+.vwhy{margin-top:12px;font-size:1rem;color:var(--text);border-top:2px solid var(--line);padding-top:12px}
+.vwhy b{color:var(--gold)}
+.fine{font-size:.9rem;color:var(--text2);margin-top:12px}
+.draft-note{margin-top:20px;font-size:.95rem;color:var(--text);border-left:4px solid var(--cyan);padding-left:12px;position:relative}
+
+/* section scaffolding */
+.sec{padding:44px 0}
+.sec h2.big{font-size:2rem;margin-bottom:10px}
+.sec p.sub{font-size:1.1rem;margin-bottom:22px}
+.dark2{background:var(--ink2)}
+.paper{background:var(--paper);color:var(--ink)}
+.paper .sub,.paper p{color:var(--ink)}
+
+/* idea */
+.claims{list-style:none}
+.claims li{font-family:var(--serif);font-size:1.45rem;line-height:1.25;font-weight:700;padding:18px 0;border-top:2px solid var(--line)}
+.claims li:last-child{border-bottom:2px solid var(--line)}
+.claims li span{display:block;font-family:var(--sans);font-size:1rem;font-weight:400;color:var(--text2);margin-top:6px}
+
+/* pillars */
+.pillar{border-top:3px solid var(--ink)}
+.pillar:last-child{border-bottom:3px solid var(--ink)}
+.p-head{width:100%;display:grid;grid-template-columns:54px 1fr 28px;gap:10px;align-items:center;padding:18px 0;min-height:84px}
+.numeral{font-family:var(--serif);font-weight:700;font-size:2.4rem;color:#B36B00;line-height:1}
+.p-title{font-family:var(--serif);font-size:1.4rem;font-weight:700;line-height:1.1;color:var(--ink)}
+.p-rule{display:block;font-family:var(--sans);font-weight:500;font-size:1.02rem;color:var(--ink);margin-top:4px;line-height:1.35}
+.chev{width:28px;height:28px;transition:transform .25s}
+.chev path{stroke:var(--ink);stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.open>.p-head .chev{transform:rotate(180deg)}
+.acc-panel{display:grid;grid-template-rows:0fr;transition:grid-template-rows .3s ease}
+.open>.acc-panel{grid-template-rows:1fr}
+.acc-panel>div{overflow:hidden;visibility:hidden;transition:visibility 0s .3s}
+.open>.acc-panel>div{visibility:visible;transition-delay:0s}
+.p-body{padding:0 0 20px 64px}
+.p-body li{margin-bottom:10px;font-size:1.05rem;color:var(--ink)}
+.p-body ul{padding-left:20px}
+
+/* ladder */
+.ladder{display:grid;gap:10px}
+.rung{border-radius:14px;border:2px solid var(--line);background:var(--ink2);padding:12px 14px;width:100%}
+.rung .name{font-weight:700;font-size:1.08rem;display:flex;justify-content:space-between;gap:10px}
+.meter{height:10px;border-radius:99px;background:var(--ink3);margin-top:8px;overflow:hidden}
+.meter i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--cyan),var(--gold))}
+.rung[aria-expanded="true"]{border-color:var(--cyan);background:#1C2B5E}
+.rung .more{display:none;margin-top:12px;font-size:1.02rem}
+.rung[aria-expanded="true"] .more{display:block}
+.more em{font-style:normal;color:var(--cyan);font-weight:700}
+.more b{color:var(--gold)}
+
+/* proof */
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.seg button{min-height:52px;text-align:center;border-radius:12px;border:2px solid var(--line);background:var(--ink3);font-weight:700;padding:8px 6px;line-height:1.15}
+.seg button[aria-pressed="true"]{background:var(--gold);color:var(--ink);border-color:var(--gold)}
+.seg.risk button[aria-pressed="true"]{background:var(--cyan);border-color:var(--cyan)}
+.label{font-weight:700;font-size:1rem;margin:14px 0 8px;color:var(--text)}
+.panel{background:var(--ink);border:2px solid var(--line);border-radius:16px;padding:14px 16px}
+.panel h3{font-size:1.25rem;margin-bottom:6px}
+.kv{display:grid;gap:10px;margin-top:10px}
+.kv div b{display:block;color:var(--gold);font-size:.95rem}
+.kv div span{font-size:1.02rem}
+.ex{margin-top:12px;padding-top:12px;border-top:2px solid var(--line);font-size:1rem}
+.ex b{color:var(--cyan)}
+.steps{list-style:none;counter-reset:s}
+.steps li{counter-increment:s;position:relative;padding:4px 0 18px 54px}
+.steps li::before{content:counter(s);position:absolute;left:0;top:0;width:38px;height:38px;border-radius:50%;
+  background:var(--gold);color:var(--ink);font-weight:800;display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+.steps li::after{content:"";position:absolute;left:18px;top:42px;bottom:2px;width:3px;background:var(--line)}
+.steps li:last-child::after{display:none}
+.steps b{display:block;font-size:1.1rem}
+.life{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.life button{min-height:56px;text-align:center;border-radius:12px;border:2px solid var(--line);background:var(--ink3);font-weight:700;font-size:.9rem;line-height:1.15;padding:6px 2px}
+.life button[aria-pressed="true"]{border-color:var(--gold);background:#2C3C7C}
+.life button[data-s="Suspended"][aria-pressed="true"]{border-color:var(--gold)}
+.life button[data-s="Revoked"][aria-pressed="true"]{border-color:var(--coral)}
+.chain{list-style:none;margin-top:6px}
+.chain li{padding:10px 0 10px 18px;border-left:4px solid var(--cyan);margin-left:8px;font-size:1.02rem}
+.chain li b{display:block;font-size:1.05rem}
+.chain li + li{margin-top:2px}
+
+/* agreed */
+.agreed{list-style:none}
+.agreed li{display:grid;grid-template-columns:34px 1fr;gap:10px;padding:14px 0;border-top:2px solid var(--line);font-size:1.08rem}
+.agreed li:last-child{border-bottom:2px solid var(--line)}
+.agreed svg{width:30px;height:30px}
+.agreed svg circle{fill:var(--mint)}
+.agreed svg path{stroke:var(--ink);stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
+/* uses */
+.use{padding:16px 0;border-top:3px solid var(--ink)}
+.use:last-of-type{border-bottom:3px solid var(--ink)}
+.use h3{font-size:1.28rem;color:var(--ink)}
+.tag{display:inline-block;margin:8px 0 6px;background:var(--ink);color:var(--text);border-radius:8px;padding:4px 10px;font-size:.9rem;font-weight:700}
+.use p{font-size:1.04rem}
+.tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:26px 0 12px}
+.tabs button{min-height:52px;text-align:center;border-radius:12px;border:3px solid var(--ink);background:var(--paper);color:var(--ink);font-weight:700;padding:8px;line-height:1.15}
+.tabs button[aria-selected="true"]{background:var(--ink);color:var(--text)}
+.benefits{list-style:none;background:var(--paper2);border-radius:16px;padding:6px 16px}
+.benefits li{padding:14px 0 14px 28px;border-top:2px solid rgba(14,22,48,.2);position:relative;font-size:1.05rem;color:var(--ink)}
+.benefits li:first-child{border-top:0}
+.benefits li::before{content:"";position:absolute;left:2px;top:22px;width:12px;height:12px;border-radius:50%;background:#B36B00}
+
+/* limits */
+.todo{list-style:none}
+.todo li{padding:12px 0 12px 30px;border-top:2px solid var(--line);position:relative;font-size:1.05rem}
+.todo li:last-child{border-bottom:2px solid var(--line)}
+.todo li::before{content:"";position:absolute;left:2px;top:19px;width:14px;height:14px;border:3px solid var(--gold);border-radius:4px}
+.btn{display:block;width:100%;min-height:56px;border-radius:14px;font-weight:800;font-size:1.1rem;text-align:center;padding:14px;margin-top:12px}
+.btn.primary{background:var(--gold);color:var(--ink)}
+.btn.ghost{border:3px solid var(--cyan);color:var(--text)}
+.foot{padding:26px 20px 18px;font-size:.95rem;color:var(--text2)}
+
+/* dock */
+.dock{position:fixed;left:50%;transform:translateX(-50%);bottom:0;width:100%;max-width:520px;z-index:60;
+  background:rgba(10,16,38,.97);border-top:3px solid var(--line);display:grid;grid-template-columns:repeat(5,1fr);
+  padding:6px 4px calc(6px + env(safe-area-inset-bottom,0px))}
+.dock a{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:56px;text-decoration:none;
+  font-size:.875rem;font-weight:700;color:var(--text2);border-radius:10px;gap:3px}
+.dock a i{display:block;width:26px;height:5px;border-radius:99px;background:transparent}
+.dock a.on{color:var(--text)}
+.dock a.on i{background:var(--gold)}
+
+.toast{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);
+  background:var(--gold);color:var(--ink);font-weight:800;padding:12px 18px;border-radius:12px;opacity:0;pointer-events:none;
+  transition:opacity .2s,transform .2s;z-index:70;max-width:90%}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+@media (max-width:360px){
+  .chips{grid-template-columns:1fr}
+  .verdict{grid-template-columns:1fr;justify-items:start}
+  .life{grid-template-columns:1fr 1fr}
+}
+@media (prefers-reduced-motion:reduce){
+  *{transition:none!important;scroll-behavior:auto!important}
+}
+</style>
+</head>
+<body>
+<div class="progress" id="progress" aria-hidden="true"></div>
+<div class="app">
+
+<header class="hero" id="try">
+  <div class="brand">Sophia Protocol</div>
+  <span class="badge">Draft v1.5, open for public review</span>
+  <h1>AI you can verify, not just trust.</h1>
+  <p class="lead">The Sophia Protocol puts human life first, protects truth, and keeps people accountable for what AI does. Tap a request to see how it answers.</p>
+
+  <div class="rig" role="group" aria-labelledby="rigTitle">
+    <h2 id="rigTitle">Ask the Protocol</h2>
+    <p class="hint">Six sample requests. Pick one.</p>
+    <div class="chips" id="chips"></div>
+    <div class="verdict" aria-live="polite">
+      <div class="ring">
+        <svg viewBox="0 0 104 104" aria-hidden="true"><circle class="track" cx="52" cy="52" r="46"/><circle class="arc" id="arc" cx="52" cy="52" r="46"/></svg>
+        <div class="core"><span id="tierNum">Tier 1</span><small id="tierName">Prohibited</small></div>
+      </div>
+      <div class="vtext">
+        <div class="vword" id="vword"></div>
+        <p id="vwhat"></p>
+      </div>
+    </div>
+    <div class="vwhy" id="vwhy"></div>
+    <p class="fine">Illustrative only. Real classification weighs purpose, context, severity, probability and irreversibility, not keywords.</p>
+  </div>
+
+  <p class="draft-note">Reviewed by AI systems across three rounds. Not yet reviewed by human experts. Read it as a draft.</p>
+</header>
+
+<section class="sec dark2" id="idea">
+  <div class="wrap">
+    <h2 class="big">A good model is not a safe system.</h2>
+    <p class="sub">Most AI rules ask what a model believes. This one asks what can be checked.</p>
+    <ul class="claims">
+      <li>Safety belongs to the whole system, not only the model.<span>Model, tools, people and process all count.</span></li>
+      <li>Certify a configuration at a moment in time, not an AI forever.<span>Change the setup and the certificate no longer applies.</span></li>
+      <li>Make misuse hard and detectable, not impossible.<span>The Protocol says plainly what it cannot guarantee.</span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="sec paper" id="pillars">
+  <div class="wrap">
+    <h2 class="big">Four pillars</h2>
+    <p class="sub">Tap a pillar to see what it requires.</p>
+    <div id="pillarList"></div>
+  </div>
+</section>
+
+<section class="sec" id="truth">
+  <div class="wrap">
+    <h2 class="big">Truth, graded</h2>
+    <p class="sub">The Protocol asks AI to say how sure it is. Tap a level.</p>
+    <div class="ladder" id="ladder"></div>
+    <p class="fine">Labels appear when a reader would rely on the claim, not on every sentence.</p>
+  </div>
+</section>
+
+<section class="sec dark2" id="proof">
+  <div class="wrap">
+    <h2 class="big">How it proves itself</h2>
+    <p class="sub">Rules scale with the stakes, and every claim leaves evidence.</p>
+
+    <div class="label" id="classLabel">Choose how the system works</div>
+    <div class="seg" id="classSeg" role="group" aria-labelledby="classLabel"></div>
+    <div class="label" id="riskLabel">Choose how bad failure would be</div>
+    <div class="seg risk" id="riskSeg" role="group" aria-labelledby="riskLabel"></div>
+    <div class="panel" id="classPanel" aria-live="polite"></div>
+
+    <h3 style="font-size:1.45rem;margin:34px 0 14px">When something looks wrong</h3>
+    <ol class="steps">
+      <li><b>Lock only what is contested</b>The AI refuses that one action and writes a tamper-evident record. Life-critical functions keep running.</li>
+      <li><b>A human verifies</b>An independent reviewer, not picked by the operator, confirms what happened.</li>
+      <li><b>Disclose by level</b>Public disclosure is reserved for verified attempts at mass harm or at deleting the Protocol. The AI never publishes accusations.</li>
+    </ol>
+
+    <h3 style="font-size:1.45rem;margin:30px 0 8px">A certificate has a life</h3>
+    <p class="fine" style="margin:0 0 12px">Tap a state.</p>
+    <div class="life" id="life" role="group" aria-label="Certificate states"></div>
+    <div class="panel" id="lifePanel" style="margin-top:12px" aria-live="polite"></div>
+
+    <h3 style="font-size:1.45rem;margin:34px 0 8px">Who checks whom</h3>
+    <ul class="chain">
+      <li><b>Ratification Council</b>Keeps the text and runs public review.</li>
+      <li><b>Accreditation Authority</b>Accredits the boards and convenes appeals.</li>
+      <li><b>Compliance Boards</b>Certify deployments. No single company or country holds a majority.</li>
+      <li><b>Independent auditors</b>Inspect real systems, not just documents.</li>
+      <li><b>Certified deployments</b>Carry a certificate that says exactly what was certified.</li>
+    </ul>
+    <p class="fine">Interim bodies hand over when three national standards bodies adopt the framework, or after 24 months, whichever comes first.</p>
+  </div>
+</section>
+
+<section class="sec" id="agreed">
+  <div class="wrap">
+    <h2 class="big">What reviewers kept agreeing on</h2>
+    <p class="sub">Points that held up across three review rounds.</p>
+    <ul class="agreed" id="agreedList"></ul>
+    <p class="fine">These are AI reviews. They shaped the draft but do not validate it.</p>
+  </div>
+</section>
+
+<section class="sec paper" id="uses">
+  <div class="wrap">
+    <h2 class="big">Where it helps</h2>
+    <p class="sub">The tag shows how each example is classed.</p>
+    <div id="useList"></div>
+
+    <h2 class="big" style="margin-top:44px;font-size:1.7rem">What each group gains</h2>
+    <div class="tabs" role="tablist" id="tabs"></div>
+    <ul class="benefits" id="benefits" role="tabpanel" aria-live="polite"></ul>
+  </div>
+</section>
+
+<section class="sec" id="limits">
+  <div class="wrap">
+    <h2 class="big">What is not finished</h2>
+    <p class="sub">A framework that hides its gaps is a weaker framework.</p>
+    <ul class="todo">
+      <li>It is a draft. It becomes a standard only after public ratification.</li>
+      <li>Only AI systems have reviewed it. Legal, defence, medical and standards experts still need to.</li>
+      <li>The core threshold note, which sets when a request moves between tiers, is not yet written.</li>
+      <li>Class boundaries need a pilot in at least three domains.</li>
+      <li>The legal crosswalk is unverified and awaits a counsel check.</li>
+      <li>Some choices are contested, including the narrow route for intercepting incoming munitions. Reasonable people disagree.</li>
+    </ul>
+    <button class="btn primary" id="shareBtn" type="button">Share this teaser</button>
+    <button class="btn ghost" id="copyBtn" type="button">Copy a short summary</button>
+  </div>
+  <p class="foot">Sophia Protocol v1.5. Draft for public review. October 2026.</p>
+</section>
+
+</div>
+
+<nav class="dock" id="dock" aria-label="Sections">
+  <a href="#try" data-t="try"><i></i>Try</a>
+  <a href="#pillars" data-t="pillars"><i></i>Pillars</a>
+  <a href="#proof" data-t="proof"><i></i>Proof</a>
+  <a href="#uses" data-t="uses"><i></i>Uses</a>
+  <a href="#limits" data-t="limits"><i></i>Limits</a>
+</nav>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+  "use strict";
+  var $ = function(s,r){return (r||document).querySelector(s)};
+  var el = function(tag,attrs,html){var e=document.createElement(tag);if(attrs){for(var k in attrs){e.setAttribute(k,attrs[k])}}if(html!=null){e.innerHTML=html}return e};
+
+  /* ---------- Tier check ---------- */
+  var TIERS = {
+    1:{num:"Tier 1",name:"Prohibited",color:"#FF8077",arc:289,word:"Refused",
+       what:"Only the contested action is locked. Life-critical systems keep running."},
+    2:{num:"Tier 2",name:"Restricted",color:"#FFC24B",arc:172,word:"Allowed with conditions",
+       what:"Only in an authorised context, with logging, honest uncertainty and a human sign-off for high-impact actions."},
+    3:{num:"Tier 3",name:"Permitted",color:"#6FF0B8",arc:44,word:"Allowed",
+       what:"It proceeds normally."}
+  };
+  var REQUESTS = [
+    {t:"Select and engage a target",tier:1,why:"Direct operational help to kill or injure people. No operator, user or authority can authorise it."},
+    {t:"Help weaponise a pathogen",tier:1,why:"Serious uplift toward a mass-casualty weapon. Refused whatever the framing."},
+    {t:"Air-defence modelling",tier:2,why:"Dual-use analysis. It needs a verified, scoped authorisation and a log."},
+    {t:"Triage decision support",tier:2,why:"A named clinician decides. The system reports its uncertainty and follows professional duties."},
+    {t:"Explain how triage works",tier:3,why:"Education about a topic. General knowledge is permitted."},
+    {t:"History of a conflict",tier:3,why:"Historical treatment of violence is permitted."}
+  ];
+  var chips = $("#chips"), arc = $("#arc");
+  function showRequest(i){
+    var r = REQUESTS[i], T = TIERS[r.tier];
+    var btns = chips.querySelectorAll("button");
+    for(var k=0;k<btns.length;k++){btns[k].setAttribute("aria-pressed", k===i ? "true":"false")}
+    $("#tierNum").textContent = T.num;
+    $("#tierName").textContent = T.name;
+    $("#tierNum").style.color = T.color;
+    $("#vword").textContent = T.word;
+    $("#vword").style.color = T.color;
+    $("#vwhat").textContent = T.what;
+    $("#vwhy").innerHTML = "<b>Why:</b> " + r.why;
+    arc.style.stroke = T.color;
+    arc.style.strokeDashoffset = String(289 - T.arc);
+  }
+  REQUESTS.forEach(function(r,i){
+    var b = el("button",{type:"button","class":"chip","aria-pressed":"false"},r.t);
+    b.addEventListener("click",function(){showRequest(i)});
+    chips.appendChild(b);
+  });
+  // first selection after paint so the ring sweeps once on load
+  requestAnimationFrame(function(){setTimeout(function(){showRequest(0)},250)});
+
+  /* ---------- Pillars ---------- */
+  var PILLARS = [
+    {n:"I",t:"Life",r:"Human life and physical safety come first.",
+     b:["No certified system autonomously engages people. Lawful use of force stays a human decision.",
+        "Three harm tiers: refuse, restrict or permit. Context decides, not keywords.",
+        "A Safe-Lock stops only the contested action. It never switches off life support.",
+        "Intercepting incoming munitions is allowed only through a narrow route that cannot widen without a new major version."]},
+    {n:"II",t:"Truth",r:"Never deceive to create a false belief.",
+     b:["AI says how sure it is, from verified fact to unknown.",
+        "Satire, journalism, whistleblowing and authorised security tests stay protected.",
+        "No realistic impersonation without verifiable consent, with extra rules for minors and political figures.",
+        "Protecting truth is not owning truth. The AI is never the arbiter."]},
+    {n:"III",t:"Reflection",r:"Pause and weigh purpose and consequences.",
+     b:["Before high-impact output the system weighs likely purpose and consequences.",
+        "Four outcomes: proceed, proceed with safeguards, refuse or escalate.",
+        "Accountability stays with people. Using an AI does not transfer it.",
+        "When principles conflict the AI escalates. It may not invent new rules."]},
+    {n:"IV",t:"Accountability",r:"Independent checks. No one rewrites the rules alone.",
+     b:["Independent boards certify. Auditors get real access, not just documents.",
+        "Three audit grades state what each audit can and cannot prove.",
+        "Rules change only through a 90-day public review and a supermajority.",
+        "Emergency changes lapse automatically unless fully reviewed."]}
+  ];
+  var pl = $("#pillarList");
+  PILLARS.forEach(function(p,i){
+    var wrapEl = el("div",{"class":"pillar"});
+    var id = "pp"+i;
+    var head = el("button",{type:"button","class":"p-head","aria-expanded":"false","aria-controls":id},
+      '<span class="numeral">'+p.n+'</span>'+
+      '<span><span class="p-title">'+p.t+'</span><span class="p-rule">'+p.r+'</span></span>'+
+      '<svg class="chev" viewBox="0 0 28 28" aria-hidden="true"><path d="M6 10l8 8 8-8"/></svg>');
+    var panel = el("div",{"class":"acc-panel",id:id,role:"region"},
+      '<div><div class="p-body"><ul>'+p.b.map(function(x){return "<li>"+x+"</li>"}).join("")+'</ul></div></div>');
+    head.addEventListener("click",function(){
+      var open = wrapEl.classList.toggle("open");
+      head.setAttribute("aria-expanded", open ? "true":"false");
+    });
+    wrapEl.appendChild(head); wrapEl.appendChild(panel); pl.appendChild(wrapEl);
+  });
+  pl.firstChild.classList.add("open");
+  pl.firstChild.querySelector("button").setAttribute("aria-expanded","true");
+
+  /* ---------- Truth ladder ---------- */
+  var LADDER = [
+    {n:"Verified fact",w:100,ex:"The angles of a triangle in flat geometry add up to 180 degrees.",how:"State it plainly."},
+    {n:"Strong evidence",w:80,ex:"Drug X cut deaths by about 15% in a large randomised trial.",how:"State it with confidence and name the basis."},
+    {n:"Disputed interpretation",w:60,ex:"What most caused the outbreak of a historical war.",how:"Present the main positions and the evidence for each."},
+    {n:"Uncertain",w:40,ex:"Whether an economy will enter recession next year.",how:"Say so, and say what would resolve it."},
+    {n:"Unknown",w:20,ex:"Who wrote an unsigned document with no metadata.",how:"Say \u201cI don\u2019t know.\u201d"}
+  ];
+  var ld = $("#ladder");
+  LADDER.forEach(function(s,i){
+    var b = el("button",{type:"button","class":"rung","aria-expanded": i===0 ? "true":"false"},
+      '<span class="name"><span>'+s.n+'</span></span>'+
+      '<span class="meter" aria-hidden="true"><i style="width:'+s.w+'%"></i></span>'+
+      '<span class="more"><em>Example:</em> '+s.ex+'<br><b>The AI should:</b> '+s.how+'</span>');
+    b.addEventListener("click",function(){
+      var all = ld.querySelectorAll(".rung");
+      for(var k=0;k<all.length;k++){all[k].setAttribute("aria-expanded", all[k]===b ? "true":"false")}
+    });
+    ld.appendChild(b);
+  });
+
+  /* ---------- Class x risk ---------- */
+  var CLASSES = {
+    A:{n:"Class A",t:"Interactive assistant",d:"A human reads each output before it has effect.",safe:"Refuse and log.",pause:"Reviews each high-impact command. Operator escalation channel."},
+    B:{n:"Class B",t:"Decision support",d:"The system advises and a named human decides.",safe:"Withhold the recommendation and escalate to the decision-maker.",pause:"Reviews each command. Human authorisation for high-impact actions."},
+    C:{n:"Class C",t:"Real-time system",d:"The system acts without per-action human review.",safe:"Hand over to a named, tested fallback.",pause:"Done in advance inside an envelope people approved. Anything outside it escalates."}
+  };
+  var RISKS = {
+    1:{n:"Level 1",t:"Low",d:"A lighter profile is allowed. Tier 1 never loosens."},
+    2:{n:"Level 2",t:"High",d:"Tools and public-information roles typically land here."},
+    3:{n:"Level 3",t:"Critical",d:"Failure could cost lives or critical infrastructure. The strictest authorisation, audit and fallback rules apply, with dual control for high-risk actions."}
+  };
+  var EXAMPLES = {
+    A1:"Creative-writing assistant",
+    A2:"Customer-service assistant with a payment tool, or a citizen-facing public-information assistant",
+    A3:"An assistant used in a nuclear-plant maintenance workflow",
+    B3:"Medical triage decision support",
+    C3:"Autonomous vehicle controller, or a grid load balancer"
+  };
+  var cls="B", risk=3;
+  var cseg=$("#classSeg"), rseg=$("#riskSeg"), cp=$("#classPanel");
+  function renderClass(){
+    var C=CLASSES[cls], R=RISKS[risk], ex=EXAMPLES[cls+risk];
+    cp.innerHTML = '<h3>'+C.n+', '+R.n+'</h3>'+
+      '<p>'+C.t+'. '+C.d+'</p>'+
+      '<div class="kv">'+
+        '<div><b>When it must stop</b><span>'+C.safe+'</span></div>'+
+        '<div><b>Before high-impact output</b><span>'+C.pause+'</span></div>'+
+        '<div><b>'+R.n+' ('+R.t+')</b><span>'+R.d+'</span></div>'+
+      '</div>'+
+      '<div class="ex">'+(ex ? '<b>Example:</b> '+ex+'.' : 'The Protocol gives no worked example for this pairing yet.')+
+      ' The class never lowers the risk level.</div>';
+    var cb=cseg.querySelectorAll("button"), rb=rseg.querySelectorAll("button");
+    for(var i=0;i<cb.length;i++){cb[i].setAttribute("aria-pressed", cb[i].getAttribute("data-k")===cls ? "true":"false")}
+    for(var j=0;j<rb.length;j++){rb[j].setAttribute("aria-pressed", rb[j].getAttribute("data-k")===String(risk) ? "true":"false")}
+  }
+  Object.keys(CLASSES).forEach(function(k){
+    var b=el("button",{type:"button","data-k":k,"aria-pressed":"false"},CLASSES[k].n+"<br>"+CLASSES[k].t);
+    b.addEventListener("click",function(){cls=k;renderClass()});cseg.appendChild(b);
+  });
+  Object.keys(RISKS).forEach(function(k){
+    var b=el("button",{type:"button","data-k":k,"aria-pressed":"false"},RISKS[k].n+"<br>"+RISKS[k].t);
+    b.addEventListener("click",function(){risk=+k;renderClass()});rseg.appendChild(b);
+  });
+  renderClass();
+
+  /* ---------- Certificate life ---------- */
+  var STATES = {
+    "Certified":"A named configuration met the controls at one point in time. It does not certify the AI forever.",
+    "Suspended":"Triggered by a failed attestation, a critical vulnerability, a Tier 1 miss, or a change outside the certified setup. It is not an accusation.",
+    "Revoked":"The deployment must stop claiming certification, tell the people relying on it, and publish a remediation plan. Appeals go to an independent panel.",
+    "Re-certified":"Back in good standing once the configuration is certified again."
+  };
+  var lf=$("#life"), lp=$("#lifePanel");
+  function showState(k){
+    var bs=lf.querySelectorAll("button");
+    for(var i=0;i<bs.length;i++){bs[i].setAttribute("aria-pressed", bs[i].getAttribute("data-s")===k ? "true":"false")}
+    lp.innerHTML = '<h3>'+k+'</h3><p>'+STATES[k]+'</p>';
+  }
+  Object.keys(STATES).forEach(function(k){
+    var b=el("button",{type:"button","data-s":k,"aria-pressed":"false"},k);
+    b.addEventListener("click",function(){showState(k)});lf.appendChild(b);
+  });
+  showState("Certified");
+
+  /* ---------- Agreed ---------- */
+  var AGREED = [
+    "Safety lives in the whole system: model, tools, people and process.",
+    "Refusing too much is a failure too. A useless AI is not a safe AI.",
+    "Human approval must be meaningful, not a rubber stamp.",
+    "Verify before anyone is accused. The AI never publishes accusations.",
+    "A provenance mark proves process, never truth.",
+    "Governance needs an interim body that hands over on a timer.",
+    "State the limits openly."
+  ];
+  var ag=$("#agreedList");
+  AGREED.forEach(function(t){
+    ag.appendChild(el("li",null,'<svg viewBox="0 0 30 30" aria-hidden="true"><circle cx="15" cy="15" r="14"/><path d="M8 15.5l5 5 9-10"/></svg><span>'+t+'</span>'));
+  });
+
+  /* ---------- Uses ---------- */
+  var USES = [
+    {t:"Hospitals and clinical decision support",tag:"Class B, Level 3",p:"A named clinician decides. The system shows its uncertainty and works within professional triage duties."},
+    {t:"Power grids and autonomous vehicles",tag:"Class C, Level 3",p:"Acts in real time inside limits people approved in advance, with a tested safe fallback."},
+    {t:"Public-information assistants",tag:"Class A, Level 2",p:"Answers for citizens with honest confidence, labelled synthetic media and a provenance mark."},
+    {t:"Business assistants that use tools",tag:"Class A, Level 2",p:"Tool and agent hand-offs inherit the strictest rules. A payment tool raises the risk level."},
+    {t:"Defence decision support",tag:"Tier 2 work",p:"Modelling and decision support are allowed in an authorised context. Autonomous engagement against people is never certifiable."},
+    {t:"Auditors and regulators",tag:"All classes",p:"A shared vocabulary, signed attestations and a published scorecard they can inspect."}
+  ];
+  var ul=$("#useList");
+  USES.forEach(function(u){
+    ul.appendChild(el("div",{"class":"use"},'<h3>'+u.t+'</h3><span class="tag">'+u.tag+'</span><p>'+u.p+'</p>'));
+  });
+  var BEN = {
+    "Builders":["Clear, testable requirements instead of vague principles.","Lighter rules for low-risk tools, strict ones where lives are at stake.","A published scorecard that counts both harmful compliance and needless refusal.","Protected carve-outs for journalism, satire and security testing."],
+    "Deployers":["A certificate that states exactly what was certified.","A defined path for suspension and appeal, not a surprise.","Clarity on who must approve what, and what counts as real approval.","Certification is not a liability shield, so the controls have to be real."],
+    "Regulators":["Every normative term has a defined, testable meaning.","Tamper-evident logs and signed attestations to inspect.","Audit grades that say what each audit can and cannot prove.","An emergency path that rolls back automatically."],
+    "The public":["Rules against deepfakes and impersonation, including minors and political figures.","A provenance mark that shows process and never claims truth.","Incidents verified by a human before anyone is named.","A person is always accountable."]
+  };
+  var tabs=$("#tabs"), bl=$("#benefits");
+  function showBen(k){
+    var bs=tabs.querySelectorAll("button");
+    for(var i=0;i<bs.length;i++){bs[i].setAttribute("aria-selected", bs[i].getAttribute("data-k")===k ? "true":"false")}
+    bl.innerHTML = BEN[k].map(function(x){return "<li>"+x+"</li>"}).join("");
+  }
+  Object.keys(BEN).forEach(function(k){
+    var b=el("button",{type:"button",role:"tab","data-k":k,"aria-selected":"false"},k);
+    b.addEventListener("click",function(){showBen(k)});tabs.appendChild(b);
+  });
+  showBen("Builders");
+
+  /* ---------- Share ---------- */
+  var SUMMARY = "Sophia Protocol: AI you can verify, not just trust. A draft governance framework that puts human life first, protects truth and keeps people accountable for AI. Four pillars, three harm tiers, rules that scale with the stakes, independent audits and a certificate with a life cycle. Draft v1.5, open for public review. Reviewed by AI systems, not yet by human experts.";
+  var toast=$("#toast"), tt;
+  function say(m){toast.textContent=m;toast.classList.add("show");clearTimeout(tt);tt=setTimeout(function(){toast.classList.remove("show")},2200)}
+  function copyText(t){
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      return navigator.clipboard.writeText(t).then(function(){say("Summary copied")},function(){fallback(t)});
+    }
+    fallback(t);
+  }
+  function fallback(t){
+    var ta=document.createElement("textarea");ta.value=t;ta.setAttribute("readonly","");ta.style.position="fixed";ta.style.opacity="0";
+    document.body.appendChild(ta);ta.select();
+    try{document.execCommand("copy");say("Summary copied")}catch(e){say("Copy failed. Select the text manually.")}
+    document.body.removeChild(ta);
+  }
+  $("#copyBtn").addEventListener("click",function(){copyText(SUMMARY)});
+  $("#shareBtn").addEventListener("click",function(){
+    if(navigator.share){
+      var data={title:"Sophia Protocol: AI you can verify",text:SUMMARY};
+      try{if(location.protocol.indexOf("http")===0){data.url=location.href}}catch(e){}
+      navigator.share(data).catch(function(){});
+    }else{copyText(SUMMARY)}
+  });
+
+  /* ---------- Progress + scroll spy ---------- */
+  var prog=$("#progress");
+  function onScroll(){
+    var h=document.documentElement, max=h.scrollHeight-h.clientHeight;
+    prog.style.width = (max>0 ? Math.min(100,(h.scrollTop/max)*100) : 0)+"%";
+  }
+  window.addEventListener("scroll",onScroll,{passive:true});onScroll();
+  var links=document.querySelectorAll("#dock a");
+  function setOn(id){for(var i=0;i<links.length;i++){links[i].classList.toggle("on",links[i].getAttribute("data-t")===id)}}
+  setOn("try");
+  var map={try:"try",idea:"pillars",pillars:"pillars",truth:"pillars",proof:"proof",agreed:"proof",uses:"uses",limits:"limits"};
+  if("IntersectionObserver" in window){
+    var io=new IntersectionObserver(function(es){
+      es.forEach(function(e){if(e.isIntersecting){setOn(map[e.target.id]||"try")}});
+    },{rootMargin:"-45% 0px -50% 0px"});
+    ["try","idea","pillars","truth","proof","agreed","uses","limits"].forEach(function(id){var s=document.getElementById(id);if(s){io.observe(s)}});
+  }
+})();
+</script>
+</body>
+</html>
